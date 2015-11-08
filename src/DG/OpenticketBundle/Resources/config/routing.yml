@@ -1,0 +1,3 @@
+dg_openticket_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: DGOpenticketBundle:Default:index }
