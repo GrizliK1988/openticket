@@ -6,7 +6,7 @@
          backupGlobals="false"
          colors="true"
          bootstrap="bootstrap.php.cache"
->
+        >
     <testsuites>
         <testsuite name="Project Test Suite">
             <directory>../src/*/*Bundle/Tests</directory>
@@ -22,7 +22,7 @@
     -->
 
     <filter>
-        <whitelist>
+        <whitelist addUncoveredFilesFromWhitelist="true">
             <directory>../src</directory>
             <exclude>
                 <directory>../src/*Bundle/Resources</directory>
@@ -34,4 +34,8 @@
             </exclude>
         </whitelist>
     </filter>
+    <logging>
+        <log type="coverage-html" target="../build/coverage_php/"/>
+        <log type="coverage-clover" target="../build/coverage_php/clover.xml"/>
+    </logging>
 </phpunit>
