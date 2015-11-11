@@ -11,6 +11,11 @@ namespace DG\OpenticketBundle\Tests\Integration;
 use DG\OpenticketBundle\Model\User;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+/**
+ * Class UserCRUDTest
+ *
+ * @author Dmitry Grachikov <dgrachikov@gmail.com>
+ */
 class UserCRUDTest extends WebTestCase
 {
     public function testUserCRUD()
@@ -21,6 +26,7 @@ class UserCRUDTest extends WebTestCase
         $user->setPassword('password');
         $user->setSalt('salt');
         $user->setRoles(['ROLE_ADMIN']);
+        $user->setEmail('test@email.com');
 
         $client = static::createClient();
         $container = $client->getContainer();

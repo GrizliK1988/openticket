@@ -17,8 +17,7 @@ use Doctrine\Common\Annotations\Annotation as Doctrine;
  * User model
  *
  * @ORM\Entity
- * @ORM\Table(name="support_users")
- * @Doctrine\IgnoreAnnotation("var")
+ * @ORM\Table(name="users")
  *
  * @author Dmitry Grachikov <dgrachikov@gmail.com>
  */
@@ -41,6 +40,13 @@ class User implements UserInterface
     private $username;
 
     /**
+     * @ORM\Column(name="email", length=255)
+     *
+     * @var string
+     */
+    private $email;
+
+    /**
      * @ORM\Column(name="salt", length=200)
      *
      * @var string
@@ -60,6 +66,13 @@ class User implements UserInterface
      * @var string[]
      */
     private $roles;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Ticket", mappedBy="createdBy")
+     *
+     * @var Ticket[]
+     */
+    private $createdTickets;
 
     /**
      * Returns the roles granted to the user.
@@ -175,5 +188,42 @@ class User implements UserInterface
     public function setSalt($salt)
     {
         $this->salt = $salt;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+
+    /**
+     * @return Ticket[]
+     */
+    public function getCreatedTickets()
+    {
+        return $this->createdTickets;
+    }
+
+    /**
+     * @param Ticket[] $createdTickets
+     */
+    public function setCreatedTickets($createdTickets)
+    {
+        $this->createdTickets = $createdTickets;
+    }
+
+    public function addCreatedTicket(Ticket $createdTicket)
+    {
+        $this->createdTickets[] = $createdTicket;
     }
 }
