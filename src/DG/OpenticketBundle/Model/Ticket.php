@@ -37,7 +37,7 @@ class Ticket
     private $createdTime;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="createdTickets")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="createdTickets", cascade={"persist"})
      * @ORM\JoinColumn(name="created_by", referencedColumnName="id")
      *
      * @var User
@@ -89,14 +89,6 @@ class Ticket
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
     }
 
     /**

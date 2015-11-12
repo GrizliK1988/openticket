@@ -68,7 +68,7 @@ class User implements UserInterface
     private $roles;
 
     /**
-     * @ORM\OneToMany(targetEntity="Ticket", mappedBy="createdBy")
+     * @ORM\OneToMany(targetEntity="Ticket", mappedBy="createdBy", cascade={"persist", "remove"})
      *
      * @var Ticket[]
      */
@@ -148,14 +148,6 @@ class User implements UserInterface
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
     }
 
     /**
