@@ -34,8 +34,6 @@
         </whitelist>
     </filter>
     <logging>
-        <log type="coverage-html" target="../build/coverage_php/"/>
-        <log type="coverage-clover" target="../build/coverage_php/clover.xml"/>
         <log type="coverage-clover" target="../build/logs/clover.xml"/>
     </logging>
 </phpunit>

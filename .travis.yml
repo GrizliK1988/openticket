@@ -3,13 +3,15 @@ language: php
 php:
   - 5.6
 
-before_script:
-  - composer install
-
 install:
+  - composer require satooshi/php-coveralls
+
+before_script:
+  - mkdir -p build/logs
   - composer install
 
-script: bin/phpunit -c app/phpunit.xml.dist
+script:
+  - bin/phpunit -c app/phpunit.xml.dist
 
 after_success:
-  - vendor/bin/coveralls -v
+  - bin/coveralls -v
