@@ -75,6 +75,18 @@ class User implements UserInterface
     private $createdTickets;
 
     /**
+     * @ORM\Column(name="created_time", type="datetimetz")
+     *
+     * @var \DateTime
+     */
+    private $createdTime;
+
+    public function __construct()
+    {
+        $this->createdTime = new \DateTime();
+    }
+
+    /**
      * Returns the roles granted to the user.
      *
      * <code>
@@ -217,5 +229,13 @@ class User implements UserInterface
     public function addCreatedTicket(Ticket $createdTicket)
     {
         $this->createdTickets[] = $createdTicket;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedTime()
+    {
+        return $this->createdTime;
     }
 }

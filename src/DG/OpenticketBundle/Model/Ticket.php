@@ -52,6 +52,20 @@ class Ticket
     private $lastModifiedTime;
 
     /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="lastModifiedTickets", cascade={"persist"})
+     * @ORM\JoinColumn(name="last_modified_by", referencedColumnName="id")
+     *
+     * @var User
+     */
+    private $lastModifiedBy;
+
+    public function __construct()
+    {
+        $this->createdTime = new \DateTime();
+        $this->lastModifiedTime = new \DateTime();
+    }
+
+    /**
      * @return User
      */
     public function getCreatedBy()
@@ -76,14 +90,6 @@ class Ticket
     }
 
     /**
-     * @param \DateTime $createdTime
-     */
-    public function setCreatedTime(\DateTime $createdTime)
-    {
-        $this->createdTime = $createdTime;
-    }
-
-    /**
      * @return int
      */
     public function getId()
@@ -105,5 +111,21 @@ class Ticket
     public function setLastModifiedTime(\DateTime $lastModifiedTime)
     {
         $this->lastModifiedTime = $lastModifiedTime;
+    }
+
+    /**
+     * @return User
+     */
+    public function getLastModifiedBy()
+    {
+        return $this->lastModifiedBy;
+    }
+
+    /**
+     * @param User $lastModifiedBy
+     */
+    public function setLastModifiedBy(User $lastModifiedBy)
+    {
+        $this->lastModifiedBy = $lastModifiedBy;
     }
 }

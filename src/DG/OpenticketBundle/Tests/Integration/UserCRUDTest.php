@@ -1,9 +1,4 @@
 <?php
-/**
- * User: Dmitry Grachikov
- * Date: 08.11.15
- * Time: 13:15
- */
 
 namespace DG\OpenticketBundle\Tests\Integration;
 
@@ -33,6 +28,17 @@ class UserCRUDTest extends WebTestCase
         $this->manager = $container->get('doctrine.orm.entity_manager');
     }
 
+    protected function tearDown()
+    {
+        $repo = $this->manager->getRepository('DGOpenticketBundle:User');
+        $users = $repo->findBy(['username' => 'test_user']);
+
+        if (count($users)) {
+            $this->manager->remove($users[0]);
+            $this->manager->flush();
+        }
+    }
+
     public function testUserWithTicketCRUD()
     {
         $user = new User();
@@ -44,8 +50,6 @@ class UserCRUDTest extends WebTestCase
 
         $ticket = new Ticket();
         $ticket->setCreatedBy($user);
-        $ticket->setCreatedTime(new \DateTime());
-        $ticket->setLastModifiedTime(new \DateTime());
 
         $user->addCreatedTicket($ticket);
 
@@ -63,6 +67,7 @@ class UserCRUDTest extends WebTestCase
         $this->assertEquals('salt', $users[0]->getSalt());
         $this->assertEquals(['ROLE_ADMIN'], $users[0]->getRoles());
         $this->assertEquals('test@email.com', $users[0]->getEmail());
+        $this->assertGreaterThan(new \DateTime('-2 seconds'), $users[0]->getCreatedTime());
 
         $tickets = $users[0]->getCreatedTickets();
         $this->assertEquals(1, count($tickets));
@@ -72,8 +77,8 @@ class UserCRUDTest extends WebTestCase
         $foundTickets = $this->manager->getRepository('DGOpenticketBundle:Ticket')->findBy(['createdBy' => $user->getId()]);
         $this->assertEquals(1, count($foundTickets));
         $this->assertEquals($ticketId, $foundTickets[0]->getId());
-        $this->assertGreaterThan(new \DateTime('-5 seconds'), $foundTickets[0]->getCreatedTime());
-        $this->assertGreaterThan(new \DateTime('-5 seconds'), $foundTickets[0]->getLastModifiedTime());
+        $this->assertGreaterThan(new \DateTime('-2 seconds'), $foundTickets[0]->getCreatedTime());
+        $this->assertGreaterThan(new \DateTime('-2 seconds'), $foundTickets[0]->getLastModifiedTime());
         $this->assertEquals($user, $foundTickets[0]->getCreatedBy());
 
         $this->manager->remove($users[0]);
@@ -97,7 +102,6 @@ class UserCRUDTest extends WebTestCase
 
         $ticket = new Ticket();
         $ticket->setCreatedBy($user);
-        $ticket->setCreatedTime(new \DateTime());
         $ticket->setLastModifiedTime(new \DateTime());
 
         $user->setCreatedTickets([$ticket]);
