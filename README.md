@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/GrizliK1988/openticket.svg)](https://travis-ci.org/GrizliK1988/openticket)
+[![Coverage Status](https://coveralls.io/repos/GrizliK1988/openticket/badge.svg?branch=master&service=github)](https://coveralls.io/github/GrizliK1988/openticket?branch=master)
 
 openticket
 ==========
