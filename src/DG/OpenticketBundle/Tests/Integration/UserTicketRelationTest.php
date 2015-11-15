@@ -9,8 +9,6 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * Class UserCRUDTest
- *
  * @author Dmitry Grachikov <dgrachikov@gmail.com>
  */
 class UserTicketRelationTest extends WebTestCase

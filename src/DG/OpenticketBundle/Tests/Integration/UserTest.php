@@ -9,11 +9,9 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * Class UserCRUDTest
- *
  * @author Dmitry Grachikov <dgrachikov@gmail.com>
  */
-class UserCRUDTest extends WebTestCase
+class UserTest extends WebTestCase
 {
     /**
      * @var EntityManager
@@ -31,12 +29,14 @@ class UserCRUDTest extends WebTestCase
     protected function tearDown()
     {
         $repo = $this->manager->getRepository('DGOpenticketBundle:User');
-        $users = $repo->findBy(['username' => 'test_user']);
 
-        if (count($users)) {
-            $this->manager->remove($users[0]);
-            $this->manager->flush();
+        foreach (['test_user', 'username_new'] as $username) {
+            $users = $repo->findBy(['username' => $username]);
+            foreach ($users as $user) {
+                $this->manager->remove($user);
+            }
         }
+        $this->manager->flush();
     }
 
     public function testUserCRUD()
@@ -65,12 +65,29 @@ class UserCRUDTest extends WebTestCase
         $this->assertEquals(false, $users[0]->isDeleted());
         $this->assertGreaterThan(new \DateTime('-2 seconds'), $users[0]->getCreatedTime());
 
-        $this->manager->remove($users[0]);
+        $users[0]
+            ->setDeleted(true)
+            ->setSalt('salt_new')
+            ->setRoles(['ROLE_USER'])
+            ->setPassword('password_new')
+            ->setEmail('email_new')
+            ->setUsername('username_new')
+        ;
+
+        $this->manager->persist($users[0]);
         $this->manager->flush();
         $this->manager->clear();
 
-        $users = $this->manager->getRepository('DGOpenticketBundle:User')->findBy(['username' => 'test_user']);
-        $this->assertEmpty($users);
+        /** @var User $foundUser */
+        $foundUser = $this->manager->getRepository('DGOpenticketBundle:User')->find($users[0]->getId());
+        $this->assertNotEmpty($foundUser);
+
+        $this->assertEquals(true, $foundUser->isDeleted());
+        $this->assertEquals('salt_new', $foundUser->getSalt());
+        $this->assertEquals(['ROLE_USER'], $foundUser->getRoles());
+        $this->assertEquals('password_new', $foundUser->getPassword());
+        $this->assertEquals('email_new', $foundUser->getEmail());
+        $this->assertEquals('username_new', $foundUser->getUsername());
     }
 }
  
