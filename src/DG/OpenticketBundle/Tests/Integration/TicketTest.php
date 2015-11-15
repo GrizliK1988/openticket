@@ -52,6 +52,13 @@ class TicketTest extends WebTestCase
             }
         }
 
+        $categoryRepo = $this->manager->getRepository('DGOpenticketBundle:Ticket\Category');
+        /** @var Ticket\Category[] $categories */
+        $categories = $categoryRepo->findBy(['id' => 1]);
+        foreach ($categories as $category) {
+            $this->manager->remove($category);
+        }
+
         $this->manager->flush();
     }
 
@@ -73,12 +80,20 @@ class TicketTest extends WebTestCase
             ->setEmail('test_another_username_for_ticket@mail.com')
             ->setDeleted(false);
 
+        $category = Ticket\Category::create()
+            ->setId(1)
+            ->setLocale('en')
+            ->setName('Bug')
+        ;
+
         $ticket = Ticket::create()
+            ->setCategory($category)
             ->setCreatedBy($creator)
             ->setLastModifiedBy($creator);
 
         $this->manager->persist($creator);
         $this->manager->persist($ticket);
+        $this->manager->persist($category);
         $this->manager->flush();
 
         $this->manager->clear();

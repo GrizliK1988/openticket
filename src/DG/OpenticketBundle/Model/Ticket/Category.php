@@ -36,6 +36,11 @@ class Category
      */
     private $name;
 
+    public static function create()
+    {
+        return new static;
+    }
+
     /**
      * @return int
      */
@@ -46,10 +51,12 @@ class Category
 
     /**
      * @param int $id
+     * @return $this
      */
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
 
     /**
@@ -62,10 +69,12 @@ class Category
 
     /**
      * @param string $locale
+     * @return $this
      */
     public function setLocale($locale)
     {
         $this->locale = $locale;
+        return $this;
     }
 
     /**
@@ -78,9 +87,11 @@ class Category
 
     /**
      * @param string $name
+     * @return $this
      */
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 } 
