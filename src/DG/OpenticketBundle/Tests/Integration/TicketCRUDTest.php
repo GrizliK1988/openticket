@@ -29,42 +29,57 @@ class TicketCRUDTest extends WebTestCase
 
     protected function tearDown()
     {
-        $repo = $this->manager->getRepository('DGOpenticketBundle:User');
-        $users = $repo->findBy(['username' => 'test_username_for_ticket']);
+        $userRepo = $this->manager->getRepository('DGOpenticketBundle:User');
+        $ticketRepo = $this->manager->getRepository('DGOpenticketBundle:Ticket');
 
-        if (count($users)) {
-            $this->manager->remove($users[0]);
-            $this->manager->flush();
+        /** @var User[] $users */
+        $users = $userRepo->findBy(['username' => 'test_username_for_ticket']);
+        foreach ($users as $user) {
+            $this->manager->remove($user);
+
+            $tickets = $ticketRepo->findBy(['lastModifiedBy' => $user->getId()]);
+            foreach ($tickets as $ticket) {
+                $this->manager->remove($ticket);
+            }
         }
+
+        $this->manager->flush();
     }
 
     public function testTicketCRUD()
     {
-        $creator = new User();
-        $creator->setUsername('test_username_for_ticket');
-        $creator->setEmail('test_username_for_ticket@mail.com');
-        $creator->setPassword('password');
-        $creator->setRoles(['ROLE']);
-        $creator->setSalt('salt');
+        $queriesCountLogger = new QueriesCountLogger();
+        $this->manager->getConnection()->getConfiguration()->setSQLLogger($queriesCountLogger);
+
+        $creator = User::create()
+            ->setUsername('test_username_for_ticket')
+            ->setPassword('password')
+            ->setSalt('salt')
+            ->setRoles(['ROLE'])
+            ->setEmail('test_username_for_ticket@mail.com')
+            ->setDeleted(false);
+
+        $this->manager->persist($creator);
+        $this->manager->flush();
+        $creatorUserId = $creator->getId();
 
         $ticket = new Ticket();
         $ticket->setCreatedBy($creator);
         $ticket->setLastModifiedBy($creator);
-
-        $this->manager->persist($creator);
         $this->manager->persist($ticket);
         $this->manager->flush();
 
-        $userId = $creator->getId();
-
         $this->manager->clear();
 
+        $startQueriesCount = $queriesCountLogger->queriesCount;
         $ticketRepo = $this->manager->getRepository('DGOpenticketBundle:Ticket');
-        /** @var Ticket[] $userTickets */
-        $userTickets = $ticketRepo->findBy(['createdBy' => $userId]);
 
+        /** @var Ticket[] $userTickets */
+        $userTickets = $ticketRepo->findBy(['createdBy' => $creatorUserId]);
+        $this->assertEquals($startQueriesCount+1, $queriesCountLogger->queriesCount);
         $this->assertEquals(1, count($userTickets));
-        $this->assertEquals($creator->getId(), $userTickets[0]->getLastModifiedBy()->getId());
+
+        $this->assertEquals($creatorUserId, $userTickets[0]->getLastModifiedBy()->getId());
+        $this->assertEquals($startQueriesCount+1, $queriesCountLogger->queriesCount);
     }
 }
- 

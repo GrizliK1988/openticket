@@ -68,11 +68,18 @@ class User implements UserInterface
     private $roles;
 
     /**
-     * @ORM\OneToMany(targetEntity="Ticket", mappedBy="createdBy", cascade={"persist", "remove"})
+     * @ORM\Column(name="deleted", type="boolean")
+     *
+     * @var bool
+     */
+    private $deleted = false;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Ticket", mappedBy="createdBy")
      *
      * @var Ticket[]
      */
-    private $createdTickets;
+    protected $createdTickets;
 
     /**
      * @ORM\Column(name="created_time", type="datetimetz")
@@ -81,9 +88,15 @@ class User implements UserInterface
      */
     private $createdTime;
 
-    public function __construct()
+    public function __construct($id = null)
     {
+        $this->id = $id;
         $this->createdTime = new \DateTime();
+    }
+
+    public static function create()
+    {
+        return new static;
     }
 
     /**
@@ -164,34 +177,42 @@ class User implements UserInterface
 
     /**
      * @param string $username
+     * @return $this
      */
     public function setUsername($username)
     {
         $this->username = $username;
+        return $this;
     }
 
     /**
      * @param string $password
+     * @return $this
      */
     public function setPassword($password)
     {
         $this->password = $password;
+        return $this;
     }
 
     /**
      * @param \string[] $roles
+     * @return $this
      */
     public function setRoles(array $roles)
     {
         $this->roles = $roles;
+        return $this;
     }
 
     /**
      * @param string $salt
+     * @return $this
      */
     public function setSalt($salt)
     {
         $this->salt = $salt;
+        return $this;
     }
 
     /**
@@ -204,31 +225,12 @@ class User implements UserInterface
 
     /**
      * @param string $email
+     * @return $this
      */
     public function setEmail($email)
     {
         $this->email = $email;
-    }
-
-    /**
-     * @return Ticket[]
-     */
-    public function getCreatedTickets()
-    {
-        return $this->createdTickets;
-    }
-
-    /**
-     * @param Ticket[] $createdTickets
-     */
-    public function setCreatedTickets($createdTickets)
-    {
-        $this->createdTickets = $createdTickets;
-    }
-
-    public function addCreatedTicket(Ticket $createdTicket)
-    {
-        $this->createdTickets[] = $createdTicket;
+        return $this;
     }
 
     /**
@@ -237,5 +239,23 @@ class User implements UserInterface
     public function getCreatedTime()
     {
         return $this->createdTime;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * @param boolean $deleted
+     * @return $this
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+        return $this;
     }
 }

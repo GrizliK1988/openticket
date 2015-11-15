@@ -39,24 +39,19 @@ class UserCRUDTest extends WebTestCase
         }
     }
 
-    public function testUserWithTicketCRUD()
+    public function testUserCRUD()
     {
-        $user = new User();
-        $user->setUsername('test_user');
-        $user->setPassword('password');
-        $user->setSalt('salt');
-        $user->setRoles(['ROLE_ADMIN']);
-        $user->setEmail('test@email.com');
-
-        $ticket = new Ticket();
-        $ticket->setCreatedBy($user);
-
-        $user->addCreatedTicket($ticket);
+        $user = User::create()
+            ->setUsername('test_user')
+            ->setPassword('password')
+            ->setSalt('salt')
+            ->setRoles(['ROLE_ADMIN'])
+            ->setEmail('test@email.com')
+            ->setDeleted(false);
 
         $this->manager->persist($user);
         $this->manager->flush();
-
-        $this->assertGreaterThan(0, $user->getId());
+        $this->manager->clear();
 
         /** @var User[] $users */
         $repo = $this->manager->getRepository('DGOpenticketBundle:User');
@@ -67,66 +62,15 @@ class UserCRUDTest extends WebTestCase
         $this->assertEquals('salt', $users[0]->getSalt());
         $this->assertEquals(['ROLE_ADMIN'], $users[0]->getRoles());
         $this->assertEquals('test@email.com', $users[0]->getEmail());
+        $this->assertEquals(false, $users[0]->isDeleted());
         $this->assertGreaterThan(new \DateTime('-2 seconds'), $users[0]->getCreatedTime());
-
-        $tickets = $users[0]->getCreatedTickets();
-        $this->assertEquals(1, count($tickets));
-        $ticketId = $tickets[0]->getId();
-
-        /** @var Ticket[] $foundTickets */
-        $foundTickets = $this->manager->getRepository('DGOpenticketBundle:Ticket')->findBy(['createdBy' => $user->getId()]);
-        $this->assertEquals(1, count($foundTickets));
-        $this->assertEquals($ticketId, $foundTickets[0]->getId());
-        $this->assertGreaterThan(new \DateTime('-2 seconds'), $foundTickets[0]->getCreatedTime());
-        $this->assertGreaterThan(new \DateTime('-2 seconds'), $foundTickets[0]->getLastModifiedTime());
-        $this->assertEquals($user, $foundTickets[0]->getCreatedBy());
 
         $this->manager->remove($users[0]);
         $this->manager->flush();
+        $this->manager->clear();
 
         $users = $this->manager->getRepository('DGOpenticketBundle:User')->findBy(['username' => 'test_user']);
         $this->assertEmpty($users);
-
-        $ticket = $this->manager->getRepository('DGOpenticketBundle:Ticket')->find($ticketId);
-        $this->assertNull($ticket);
-    }
-
-    public function testTicketDelete()
-    {
-        $user = new User();
-        $user->setUsername('test_user');
-        $user->setPassword('password');
-        $user->setSalt('salt');
-        $user->setRoles(['ROLE_ADMIN']);
-        $user->setEmail('test@email.com');
-
-        $ticket = new Ticket();
-        $ticket->setCreatedBy($user);
-        $ticket->setLastModifiedTime(new \DateTime());
-
-        $user->setCreatedTickets([$ticket]);
-
-        $this->manager->persist($user);
-        $this->manager->flush();
-
-        /** @var User[] $users */
-        $repo = $this->manager->getRepository('DGOpenticketBundle:User');
-        $users = $repo->findBy(['username' => 'test_user']);
-
-        $tickets = $users[0]->getCreatedTickets();
-        $ticketId = $tickets[0]->getId();
-
-        $this->manager->remove($tickets[0]);
-        $this->manager->flush();
-
-        $users = $this->manager->getRepository('DGOpenticketBundle:User')->findBy(['username' => 'test_user']);
-        $this->assertNotEmpty($users);
-
-        $ticket = $this->manager->getRepository('DGOpenticketBundle:Ticket')->find($ticketId);
-        $this->assertNull($ticket);
-
-        $this->manager->remove($users[0]);
-        $this->manager->flush();
     }
 }
  

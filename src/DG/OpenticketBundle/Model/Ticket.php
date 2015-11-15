@@ -37,8 +37,8 @@ class Ticket
     private $createdTime;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="createdTickets", cascade={"persist"})
-     * @ORM\JoinColumn(name="created_by", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="createdTickets")
+     * @ORM\JoinColumn(name="created_by", referencedColumnName="id", nullable=false)
      *
      * @var User
      */
@@ -52,12 +52,17 @@ class Ticket
     private $lastModifiedTime;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="lastModifiedTickets", cascade={"persist"})
-     * @ORM\JoinColumn(name="last_modified_by", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="lastModifiedTickets")
+     * @ORM\JoinColumn(name="last_modified_by", referencedColumnName="id", nullable=false)
      *
      * @var User
      */
     private $lastModifiedBy;
+
+    public static function create()
+    {
+        return new static;
+    }
 
     public function __construct()
     {
