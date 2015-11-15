@@ -80,10 +80,12 @@ class Ticket
 
     /**
      * @param User $createdBy
+     * @return $this
      */
     public function setCreatedBy(User $createdBy)
     {
         $this->createdBy = $createdBy;
+        return $this;
     }
 
     /**
@@ -112,10 +114,12 @@ class Ticket
 
     /**
      * @param \DateTime $lastModifiedTime
+     * @return $this
      */
     public function setLastModifiedTime(\DateTime $lastModifiedTime)
     {
         $this->lastModifiedTime = $lastModifiedTime;
+        return $this;
     }
 
     /**
@@ -128,9 +132,11 @@ class Ticket
 
     /**
      * @param User $lastModifiedBy
+     * @return $this
      */
     public function setLastModifiedBy(User $lastModifiedBy)
     {
         $this->lastModifiedBy = $lastModifiedBy;
+        return $this;
     }
 }
