@@ -25,10 +25,14 @@ class UserTicketRelationTest extends AbstractORMTest
         $this->manager->flush();
         $creatorUserId = $creator->getId();
 
+        $category = Ticket\Category::create();
+
         $ticket = Ticket::create()
             ->setCreatedBy($creator)
+            ->setCategory($category)
             ->setLastModifiedBy($creator);
 
+        $this->persist($category);
         $this->persist($ticket);
         $this->manager->flush();
 

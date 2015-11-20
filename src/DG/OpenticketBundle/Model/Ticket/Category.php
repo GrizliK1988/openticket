@@ -16,25 +16,11 @@ class Category
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @var int
      */
     private $id;
-
-    /**
-     * @ORM\Column(type="string", length=10)
-     * @ORM\Id
-     *
-     * @var string
-     */
-    private $locale;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     *
-     * @var string
-     */
-    private $name;
 
     /**
      * @ORM\Column(type="boolean")
@@ -62,52 +48,6 @@ class Category
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @param int $id
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLocale()
-    {
-        return $this->locale;
-    }
-
-    /**
-     * @param string $locale
-     * @return $this
-     */
-    public function setLocale($locale)
-    {
-        $this->locale = $locale;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     * @return $this
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-        return $this;
     }
 
     /**
