@@ -1,101 +1,63 @@
 <?php
 
 namespace DG\OpenticketBundle\Tests\Integration;
-use DG\OpenticketBundle\Model\Ticket;
-use DG\OpenticketBundle\Model\User;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+
+use DG\OpenticketBundle\Model\Ticket;
+use DG\OpenticketBundle\Model\TicketCategory;
+use DG\OpenticketBundle\Model\User;
 
 /**
  * @author Dmitry Grachikov <dgrachikov@gmail.com>
  */
-class TicketCategoryRelationTest extends WebTestCase
+class TicketCategoryRelationTest extends AbstractORMTest
 {
-    /**
-     * @var EntityManager
-     */
-    private $manager;
-
-    /**
-     * @var QueriesCountLogger
-     */
-    private $queriesCountLogger;
-
-    protected function setUp()
+    public function testRelation()
     {
-        $client = static::createClient();
-        $container = $client->getContainer();
+        $category = Ticket\Category::create()
+            ->setId(185)
+            ->setLocale('en')
+            ->setName('Category');
 
-        $this->manager = $container->get('doctrine.orm.entity_manager');
-        $this->queriesCountLogger = new QueriesCountLogger();
-        $this->manager->getConnection()->getConfiguration()->setSQLLogger($this->queriesCountLogger);
-    }
-
-    protected function tearDown()
-    {
-        $userRepo = $this->manager->getRepository('DGOpenticketBundle:User');
-        $ticketRepo = $this->manager->getRepository('DGOpenticketBundle:Ticket');
-        $categoryRepo = $this->manager->getRepository('DGOpenticketBundle:Ticket\Category');
-
-        /** @var User[] $users */
-        $users = $userRepo->findBy(['username' => 'test_ticket_category_username']);
-        foreach ($users as $user) {
-            $tickets = $ticketRepo->findBy(['createdBy' => $user->getId()]);
-            foreach ($tickets as $ticket) {
-                $this->manager->remove($ticket);
-            }
-            $this->manager->remove($user);
-        }
-
-        /** @var Ticket\Category[] $categories */
-        $categories = $categoryRepo->findBy(['id' => 1]);
-        foreach ($categories as $category) {
-            $this->manager->remove($category);
-        }
-
-        $this->manager->flush();
-    }
-
-    public function testTicketCategoryRelation()
-    {
         $user = User::create()
-            ->setUsername('test_ticket_category_username')
-            ->setEmail('test_ticket_category_username@mail.com')
+            ->setEmail('email')
             ->setPassword('password')
             ->setRoles(['ROLE'])
             ->setSalt('salt')
-        ;
-
-        $category = Ticket\Category::create()
-            ->setId(1)
-            ->setLocale('en')
-            ->setName('Bug')
-        ;
+            ->setUsername('username');
 
         $ticket = Ticket::create()
             ->setCreatedBy($user)
-            ->setLastModifiedBy($user)
-            ->setCategory($category)
-        ;
+            ->setLastModifiedBy($user);
 
-        $this->manager->persist($user);
-        $this->manager->persist($ticket);
-        $this->manager->persist($category);
+        $this->persist($user);
+        $this->persist($ticket);
+        $this->persist($category);
+        $this->manager->flush();
+
+        $ticketCategoryRelation = TicketCategory::create()
+            ->setCategoryId($category->getId())
+            ->setTicket($ticket);
+        $this->manager->persist($ticketCategoryRelation);
         $this->manager->flush();
         $this->manager->clear();
 
+        $categoryRepo = $this->manager->getRepository('DGOpenticketBundle:Ticket\Category');
+        /** @var Ticket\Category[] $foundCategories */
+        $foundCategories = $categoryRepo->findBy(['id' => $ticketCategoryRelation->getCategoryId()]);
+        $this->assertEquals(1, count($foundCategories));
+        $this->assertEquals('en', $foundCategories[0]->getLocale());
+
         $ticketRepo = $this->manager->getRepository('DGOpenticketBundle:Ticket');
-        /** @var Ticket[] $foundTickets */
-        $foundTickets = $ticketRepo->findBy(['categoryId' => 1, 'categoryLocale' => 'en']);
+        $ticketCategoryRelationRepo = $this->manager->getRepository('DGOpenticketBundle:TicketCategory');
 
-        $this->assertEquals(1, count($foundTickets));
+        /** @var TicketCategory $foundTicketCategoryRelation */
+        $foundTicketCategoryRelation = $ticketCategoryRelationRepo->findOneBy(['categoryId' => $category->getId()]);
+        $this->assertNotNull($foundTicketCategoryRelation);
+        $this->assertEquals($ticket->getId(), $foundTicketCategoryRelation->getTicket()->getId());
 
-        $queryCount = $this->queriesCountLogger->queriesCount;
-
-        $this->assertEquals(1, $foundTickets[0]->getCategory()->getId());
-        $this->assertEquals('en', $foundTickets[0]->getCategory()->getLocale());
-        $this->assertEquals($queryCount, $this->queriesCountLogger->queriesCount);
+        $this->manager->remove($foundTicketCategoryRelation);
+        $this->manager->flush();
     }
 }
  

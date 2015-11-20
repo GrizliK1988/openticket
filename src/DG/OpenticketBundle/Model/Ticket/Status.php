@@ -7,11 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="ticket_categories")
+ * @ORM\Table(name="ticket_statuses")
  *
  * @author Dmitry Grachikov <dgrachikov@gmail.com>
  */
-class Category
+class Status
 {
     /**
      * @ORM\Column(type="integer")
@@ -127,4 +127,4 @@ class Category
         $this->deleted = $deleted;
         return $this;
     }
-} 
+}

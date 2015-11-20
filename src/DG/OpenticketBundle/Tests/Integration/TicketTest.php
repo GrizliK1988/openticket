@@ -5,63 +5,14 @@ namespace DG\OpenticketBundle\Tests\Integration;
 
 use DG\OpenticketBundle\Model\Ticket;
 use DG\OpenticketBundle\Model\User;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
  * Class TicketTest
  *
  * @author Dmitry Grachikov <dgrachikov@gmail.com>
  */
-class TicketTest extends WebTestCase
+class TicketTest extends AbstractORMTest
 {
-    /**
-     * @var EntityManager
-     */
-    private $manager;
-
-    /**
-     * @var QueriesCountLogger
-     */
-    private $queriesCountLogger;
-
-    protected function setUp()
-    {
-        $client = static::createClient();
-        $container = $client->getContainer();
-        $this->manager = $container->get('doctrine.orm.entity_manager');
-        $this->queriesCountLogger = new QueriesCountLogger();
-        $this->manager->getConnection()->getConfiguration()->setSQLLogger($this->queriesCountLogger);
-    }
-
-    protected function tearDown()
-    {
-        $userRepo = $this->manager->getRepository('DGOpenticketBundle:User');
-        $ticketRepo = $this->manager->getRepository('DGOpenticketBundle:Ticket');
-
-        foreach (['test_username_for_ticket', 'test_another_username_for_ticket'] as $username) {
-            /** @var User[] $users */
-            $users = $userRepo->findBy(['username' => $username]);
-            foreach ($users as $user) {
-                $this->manager->remove($user);
-
-                $tickets = $ticketRepo->findBy(['lastModifiedBy' => $user->getId()]);
-                foreach ($tickets as $ticket) {
-                    $this->manager->remove($ticket);
-                }
-            }
-        }
-
-        $categoryRepo = $this->manager->getRepository('DGOpenticketBundle:Ticket\Category');
-        /** @var Ticket\Category[] $categories */
-        $categories = $categoryRepo->findBy(['id' => 1]);
-        foreach ($categories as $category) {
-            $this->manager->remove($category);
-        }
-
-        $this->manager->flush();
-    }
-
     public function testTicketCreateReadUpdate()
     {
         $creator = User::create()
@@ -80,20 +31,12 @@ class TicketTest extends WebTestCase
             ->setEmail('test_another_username_for_ticket@mail.com')
             ->setDeleted(false);
 
-        $category = Ticket\Category::create()
-            ->setId(1)
-            ->setLocale('en')
-            ->setName('Bug')
-        ;
-
         $ticket = Ticket::create()
-            ->setCategory($category)
             ->setCreatedBy($creator)
             ->setLastModifiedBy($creator);
 
-        $this->manager->persist($creator);
-        $this->manager->persist($ticket);
-        $this->manager->persist($category);
+        $this->persist($creator);
+        $this->persist($ticket);
         $this->manager->flush();
 
         $this->manager->clear();
@@ -108,8 +51,8 @@ class TicketTest extends WebTestCase
         $this->assertGreaterThan(new \DateTime('-2 seconds'), $foundTicket->getLastModifiedTime());
 
         $foundTicket->setLastModifiedBy($anotherUser);
-        $this->manager->persist($anotherUser);
-        $this->manager->persist($foundTicket);
+        $this->persist($anotherUser);
+        $this->persist($foundTicket);
         $this->manager->flush();
 
         $this->manager->clear();

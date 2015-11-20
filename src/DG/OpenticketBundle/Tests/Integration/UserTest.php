@@ -5,40 +5,12 @@ namespace DG\OpenticketBundle\Tests\Integration;
 
 use DG\OpenticketBundle\Model\Ticket;
 use DG\OpenticketBundle\Model\User;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
  * @author Dmitry Grachikov <dgrachikov@gmail.com>
  */
-class UserTest extends WebTestCase
+class UserTest extends AbstractORMTest
 {
-    /**
-     * @var EntityManager
-     */
-    private $manager;
-
-    protected function setUp()
-    {
-        $client = static::createClient();
-        $container = $client->getContainer();
-
-        $this->manager = $container->get('doctrine.orm.entity_manager');
-    }
-
-    protected function tearDown()
-    {
-        $repo = $this->manager->getRepository('DGOpenticketBundle:User');
-
-        foreach (['test_user', 'username_new'] as $username) {
-            $users = $repo->findBy(['username' => $username]);
-            foreach ($users as $user) {
-                $this->manager->remove($user);
-            }
-        }
-        $this->manager->flush();
-    }
-
     public function testUserCRUD()
     {
         $user = User::create()
@@ -49,7 +21,7 @@ class UserTest extends WebTestCase
             ->setEmail('test@email.com')
             ->setDeleted(false);
 
-        $this->manager->persist($user);
+        $this->persist($user);
         $this->manager->flush();
         $this->manager->clear();
 
@@ -74,7 +46,7 @@ class UserTest extends WebTestCase
             ->setUsername('username_new')
         ;
 
-        $this->manager->persist($users[0]);
+        $this->persist($users[0]);
         $this->manager->flush();
         $this->manager->clear();
 

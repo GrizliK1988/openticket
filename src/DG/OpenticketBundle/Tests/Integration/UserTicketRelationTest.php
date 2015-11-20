@@ -5,61 +5,13 @@ namespace DG\OpenticketBundle\Tests\Integration;
 
 use DG\OpenticketBundle\Model\Ticket;
 use DG\OpenticketBundle\Model\User;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
  * @author Dmitry Grachikov <dgrachikov@gmail.com>
  */
-class UserTicketRelationTest extends WebTestCase
+class UserTicketRelationTest extends AbstractORMTest
 {
-    /**
-     * @var EntityManager
-     */
-    private $manager;
-
-    /**
-     * @var QueriesCountLogger
-     */
-    private $queriesCountLogger;
-
-    protected function setUp()
-    {
-        $client = static::createClient();
-        $container = $client->getContainer();
-
-        $this->manager = $container->get('doctrine.orm.entity_manager');
-        $this->queriesCountLogger = new QueriesCountLogger();
-        $this->manager->getConnection()->getConfiguration()->setSQLLogger($this->queriesCountLogger);
-    }
-
-    protected function tearDown()
-    {
-        $userRepo = $this->manager->getRepository('DGOpenticketBundle:User');
-        $ticketRepo = $this->manager->getRepository('DGOpenticketBundle:Ticket');
-
-        /** @var User[] $users */
-        $users = $userRepo->findBy(['username' => 'test_username_for_ticket']);
-        foreach ($users as $user) {
-            $this->manager->remove($user);
-
-            $tickets = $ticketRepo->findBy(['lastModifiedBy' => $user->getId()]);
-            foreach ($tickets as $ticket) {
-                $this->manager->remove($ticket);
-            }
-        }
-
-        $categoryRepo = $this->manager->getRepository('DGOpenticketBundle:Ticket\Category');
-        /** @var Ticket\Category[] $categories */
-        $categories = $categoryRepo->findBy(['id' => 1]);
-        foreach ($categories as $category) {
-            $this->manager->remove($category);
-        }
-
-        $this->manager->flush();
-    }
-
-    public function testUserDelete()
+    public function testRelation()
     {
         $creator = User::create()
             ->setUsername('test_username_for_ticket')
@@ -69,23 +21,15 @@ class UserTicketRelationTest extends WebTestCase
             ->setEmail('test_username_for_ticket@mail.com')
             ->setDeleted(false);
 
-        $this->manager->persist($creator);
+        $this->persist($creator);
         $this->manager->flush();
         $creatorUserId = $creator->getId();
 
-        $category = Ticket\Category::create()
-            ->setId(1)
-            ->setLocale('en')
-            ->setName('Bug')
-        ;
-
         $ticket = Ticket::create()
             ->setCreatedBy($creator)
-            ->setLastModifiedBy($creator)
-            ->setCategory($category);
+            ->setLastModifiedBy($creator);
 
-        $this->manager->persist($ticket);
-        $this->manager->persist($category);
+        $this->persist($ticket);
         $this->manager->flush();
 
         $this->manager->clear();

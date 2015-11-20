@@ -59,31 +59,6 @@ class Ticket
      */
     private $lastModifiedBy;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="\DG\OpenticketBundle\Model\Ticket\Category", inversedBy="tickets")
-     * @ORM\JoinColumns(
-     *     @ORM\JoinColumn(name="category_id", referencedColumnName="id", nullable=false),
-     *     @ORM\JoinColumn(name="category_locale", referencedColumnName="locale", nullable=false)
-     * )
-     *
-     * @var Ticket\Category
-     */
-    private $category;
-
-    /**
-     * @ORM\Column(name="category_id", type="integer")
-     *
-     * @var int
-     */
-    private $categoryId;
-
-    /**
-     * @ORM\Column(name="category_locale", type="string", length=10)
-     *
-     * @var string
-     */
-    private $categoryLocale;
-
     public static function create()
     {
         return new static;
@@ -162,24 +137,6 @@ class Ticket
     public function setLastModifiedBy(User $lastModifiedBy)
     {
         $this->lastModifiedBy = $lastModifiedBy;
-        return $this;
-    }
-
-    /**
-     * @return Ticket\Category
-     */
-    public function getCategory()
-    {
-        return $this->category;
-    }
-
-    /**
-     * @param Ticket\Category $category
-     * @return $this
-     */
-    public function setCategory(Ticket\Category $category)
-    {
-        $this->category = $category;
         return $this;
     }
 }
