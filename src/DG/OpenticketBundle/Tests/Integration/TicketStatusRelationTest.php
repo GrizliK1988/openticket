@@ -9,7 +9,7 @@ use DG\OpenticketBundle\Model\User;
 /**
  * @author Dmitry Grachikov <dgrachikov@gmail.com>
  */
-class TicketCategoryRelationTest extends AbstractORMTest
+class TicketStatusRelationTest extends AbstractORMTest
 {
     public function testCategoryCreateReadUpdate()
     {
@@ -22,12 +22,11 @@ class TicketCategoryRelationTest extends AbstractORMTest
             ->setDeleted(false);
 
         $category = Ticket\Category::create();
-
         $status = Ticket\Status::create();
 
         $ticket = Ticket::create()
-            ->setCategory($category)
             ->setStatus($status)
+            ->setCategory($category)
             ->setCreatedBy($creator)
             ->setLastModifiedBy($creator);
 
@@ -38,28 +37,28 @@ class TicketCategoryRelationTest extends AbstractORMTest
         $this->manager->flush();
         $this->manager->clear();
 
-        $categoryRepo = $this->manager->getRepository('DGOpenticketBundle:Ticket\Category');
+        $statusRepo = $this->manager->getRepository('DGOpenticketBundle:Ticket\Status');
 
-        /** @var Ticket\Category[] $foundNotDeletedCategories */
-        $foundNotDeletedCategories = $categoryRepo->findBy(['deleted' => false]);
-        $this->assertEquals(1, count($foundNotDeletedCategories));
-        $this->assertGreaterThan(0, $foundNotDeletedCategories[0]->getId());
-        $this->assertFalse($foundNotDeletedCategories[0]->isDeleted());
+        /** @var Ticket\Status[] $foundNotDeletedStatuses */
+        $foundNotDeletedStatuses = $statusRepo->findBy(['deleted' => false]);
+        $this->assertEquals(1, count($foundNotDeletedStatuses));
+        $this->assertGreaterThan(0, $foundNotDeletedStatuses[0]->getId());
+        $this->assertFalse($foundNotDeletedStatuses[0]->isDeleted());
 
-        $foundNotDeletedCategories[0]->setDeleted(true);
-        $this->persist($foundNotDeletedCategories[0]);
+        $foundNotDeletedStatuses[0]->setDeleted(true);
+        $this->persist($foundNotDeletedStatuses[0]);
         $this->manager->flush();
         $this->manager->clear();
 
-        /** @var Ticket\Category[] $foundDeletedCategories */
-        $foundDeletedCategories = $categoryRepo->findBy(['deleted' => true]);
-        $this->assertEquals(1, count($foundDeletedCategories));
-        $this->assertTrue($foundDeletedCategories[0]->isDeleted());
+        /** @var Ticket\Status[] $foundDeletedStatuses */
+        $foundDeletedStatuses = $statusRepo->findBy(['deleted' => true]);
+        $this->assertEquals(1, count($foundDeletedStatuses));
+        $this->assertTrue($foundDeletedStatuses[0]->isDeleted());
         $this->manager->clear();
 
         $ticketRepo = $this->manager->getRepository('DGOpenticketBundle:Ticket');
 
-        $foundTickets = $ticketRepo->findBy(['category' => $foundDeletedCategories[0]]);
+        $foundTickets = $ticketRepo->findBy(['status' => $foundDeletedStatuses[0]]);
         $this->assertEquals(1, count($foundTickets));
     }
 }

@@ -24,8 +24,11 @@ class TicketMessageTest extends AbstractORMTest
 
         $category = Ticket\Category::create();
 
+        $status = Ticket\Status::create();
+
         $ticket = Ticket::create()
             ->setCategory($category)
+            ->setStatus($status)
             ->setCreatedBy($user)
             ->setLastModifiedBy($user);
 
@@ -40,6 +43,7 @@ class TicketMessageTest extends AbstractORMTest
         $this->persist($ticket);
         $this->persist($message);
         $this->persist($category);
+        $this->persist($status);
         $this->manager->flush();
 
         $message->setText('new text');

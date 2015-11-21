@@ -67,6 +67,14 @@ class Ticket
      */
     private $category;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="\DG\OpenticketBundle\Model\Ticket\Status")
+     * @ORM\JoinColumn(name="status_id", nullable=false)
+     *
+     * @var Ticket\Status
+     */
+    private $status;
+
     public static function create()
     {
         return new static;
@@ -163,6 +171,24 @@ class Ticket
     public function setCategory(Ticket\Category $category)
     {
         $this->category = $category;
+        return $this;
+    }
+
+    /**
+     * @return Ticket\Status
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param Ticket\Status $status
+     * @return Ticket
+     */
+    public function setStatus(Ticket\Status $status)
+    {
+        $this->status = $status;
         return $this;
     }
 }
