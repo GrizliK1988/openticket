@@ -10,7 +10,7 @@ use DG\OpenticketBundle\Model\Translation;
  */
 class TranslationTest extends AbstractORMTest
 {
-    public function testUserCRUD()
+    public function testTranslationCreateReadUpdate()
     {
         $translation = Translation::create()
             ->setLocale('ru')

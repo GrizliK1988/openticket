@@ -11,7 +11,7 @@ use DG\OpenticketBundle\Model\User;
  */
 class TicketMessageAttachmentTest extends AbstractORMTest
 {
-    public function testMessageCreateReadUpdate()
+    public function testMessageAttachmentCreateReadUpdate()
     {
         $user = User::create()
             ->setUsername('test_ticket_message_username')

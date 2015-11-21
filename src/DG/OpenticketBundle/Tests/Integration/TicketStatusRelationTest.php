@@ -11,7 +11,7 @@ use DG\OpenticketBundle\Model\User;
  */
 class TicketStatusRelationTest extends AbstractORMTest
 {
-    public function testCategoryCreateReadUpdate()
+    public function testStatusCreateReadUpdate()
     {
         $creator = User::create()
             ->setUsername('test_username_for_ticket')
