@@ -17,8 +17,7 @@ use Doctrine\Common\Annotations\Annotation as Doctrine;
  * User model
  *
  * @ORM\Entity
- * @ORM\Table(name="support_users")
- * @Doctrine\IgnoreAnnotation("var")
+ * @ORM\Table(name="users")
  *
  * @author Dmitry Grachikov <dgrachikov@gmail.com>
  */
@@ -41,6 +40,13 @@ class User implements UserInterface
     private $username;
 
     /**
+     * @ORM\Column(name="email", length=255)
+     *
+     * @var string
+     */
+    private $email;
+
+    /**
      * @ORM\Column(name="salt", length=200)
      *
      * @var string
@@ -60,6 +66,38 @@ class User implements UserInterface
      * @var string[]
      */
     private $roles;
+
+    /**
+     * @ORM\Column(name="deleted", type="boolean")
+     *
+     * @var bool
+     */
+    private $deleted = false;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Ticket", mappedBy="createdBy")
+     *
+     * @var Ticket[]
+     */
+    protected $createdTickets;
+
+    /**
+     * @ORM\Column(name="created_time", type="datetimetz")
+     *
+     * @var \DateTime
+     */
+    private $createdTime;
+
+    public function __construct($id = null)
+    {
+        $this->id = $id;
+        $this->createdTime = new \DateTime();
+    }
+
+    public static function create()
+    {
+        return new static;
+    }
 
     /**
      * Returns the roles granted to the user.
@@ -138,42 +176,86 @@ class User implements UserInterface
     }
 
     /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
      * @param string $username
+     * @return $this
      */
     public function setUsername($username)
     {
         $this->username = $username;
+        return $this;
     }
 
     /**
      * @param string $password
+     * @return $this
      */
     public function setPassword($password)
     {
         $this->password = $password;
+        return $this;
     }
 
     /**
      * @param \string[] $roles
+     * @return $this
      */
     public function setRoles(array $roles)
     {
         $this->roles = $roles;
+        return $this;
     }
 
     /**
      * @param string $salt
+     * @return $this
      */
     public function setSalt($salt)
     {
         $this->salt = $salt;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     * @return $this
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedTime()
+    {
+        return $this->createdTime;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * @param boolean $deleted
+     * @return $this
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+        return $this;
     }
 }

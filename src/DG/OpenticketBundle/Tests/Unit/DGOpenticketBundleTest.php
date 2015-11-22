@@ -11,6 +11,11 @@ namespace DG\OpenticketBundle\Tests\Unit;
 use DG\OpenticketBundle\DGOpenticketBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+/**
+ * Class DGOpenticketBundleTest
+ *
+ * @author Dmitry Grachikov <dgrachikov@gmail.com>
+ */
 class DGOpenticketBundleTest extends \PHPUnit_Framework_TestCase
 {
     public function testBundleBuild()

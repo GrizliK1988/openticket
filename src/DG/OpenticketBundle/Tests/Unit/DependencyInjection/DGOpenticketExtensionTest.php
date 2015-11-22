@@ -12,6 +12,11 @@ use DG\OpenticketBundle\DependencyInjection\DGOpenticketExtension;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+/**
+ * Class DGOpenticketExtensionTest
+ *
+ * @author Dmitry Grachikov <dgrachikov@gmail.com>
+ */
 class DGOpenticketExtensionTest extends \PHPUnit_Framework_TestCase
 {
     public function testLoadFail()

@@ -4,6 +4,11 @@ namespace DG\OpenticketBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+/**
+ * Class DefaultControllerTest
+ *
+ * @author Dmitry Grachikov <dgrachikov@gmail.com>
+ */
 class DefaultControllerTest extends WebTestCase
 {
     public function testIndex()

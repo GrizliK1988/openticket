@@ -6,6 +6,11 @@ use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappi
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * DGOpenticketBundle
+ *
+ * @author Dmitry Grachikov <dgrachikov@gmail.com>
+ */
 class DGOpenticketBundle extends Bundle
 {
     public function build(ContainerBuilder $container)
