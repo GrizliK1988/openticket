@@ -1,0 +1,21 @@
+services:
+    dg_openticket.db_fixtures.manager:
+        class: DG\OpenticketBundle\DataFixtures\FixturesManager
+
+    dg_openticket.db_fixture.users:
+        class: DG\OpenticketBundle\DataFixtures\ORM\UsersFixture
+        arguments: [@doctrine.orm.entity_manager, @security.password_encoder]
+        tags:
+            - {name: dg_openticket.db_fixture}
+
+    dg_openticket.db_fixture.ticket_categories:
+        class: DG\OpenticketBundle\DataFixtures\ORM\TicketCategoryFixture
+        arguments: [@doctrine.orm.entity_manager]
+        tags:
+            - {name: dg_openticket.db_fixture}
+
+    dg_openticket.db_fixture.ticket_statuses:
+        class: DG\OpenticketBundle\DataFixtures\ORM\TicketStatusFixture
+        arguments: [@doctrine.orm.entity_manager]
+        tags:
+            - {name: dg_openticket.db_fixture}

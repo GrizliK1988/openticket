@@ -13,6 +13,8 @@ use Doctrine\ORM\EntityManager;
  */
 class TicketStatusFixture implements FixtureInterface
 {
+    const DIC_NAME = 'dg_openticket.db_fixture.ticket_statuses';
+
     /**
      * @var EntityManager
      */

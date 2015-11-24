@@ -6,15 +6,17 @@ namespace DG\OpenticketBundle\DataFixtures\ORM;
 use DG\OpenticketBundle\DataFixtures\FixtureInterface;
 use DG\OpenticketBundle\Model\User;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * @author Dmitry Grachikov <dgrachikov@gmail.com>
  */
 class UsersFixture implements FixtureInterface
 {
+    const DIC_NAME = 'dg_openticket.db_fixture.users';
+
     /**
-     * @var PasswordEncoderInterface
+     * @var UserPasswordEncoderInterface
      */
     private $passwordEncoder;
 
@@ -26,9 +28,9 @@ class UsersFixture implements FixtureInterface
     /**
      * UsersFixture constructor.
      * @param EntityManager $entityManager
-     * @param PasswordEncoderInterface $passwordEncoder
+     * @param UserPasswordEncoderInterface $passwordEncoder
      */
-    public function __construct(EntityManager $entityManager, PasswordEncoderInterface $passwordEncoder)
+    public function __construct(EntityManager $entityManager, UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
@@ -43,14 +45,16 @@ class UsersFixture implements FixtureInterface
     {
         $password = 'admin';
         $salt = uniqid(mt_rand(), true);
-        $encodedPassword = $this->passwordEncoder->encodePassword($password, $salt);
 
         $user = User::create()
             ->setUsername('admin')
             ->setRoles(['ROLE_ADMIN'])
             ->setSalt($salt)
-            ->setPassword($encodedPassword)
             ->setEmail('admin@mail.com');
+
+        $encodedPassword = $this->passwordEncoder->encodePassword($user, $password);
+
+        $user->setPassword($encodedPassword);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();

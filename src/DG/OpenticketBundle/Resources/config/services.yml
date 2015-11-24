@@ -1,3 +1,6 @@
+imports:
+    - {resource: 'services/fixtures.yml'}
+
 services:
     dg_openticket.table_prefix_subscriber:
         class: DG\OpenticketBundle\EventSubscriber\TablePrefixEventSubscriber
