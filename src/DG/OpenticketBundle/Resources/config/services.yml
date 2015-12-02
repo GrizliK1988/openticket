@@ -1,5 +1,6 @@
 imports:
     - {resource: 'services/fixtures.yml'}
+    - {resource: 'services/commands.yml'}
 
 services:
     dg_openticket.table_prefix_subscriber:

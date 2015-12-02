@@ -1,21 +1,47 @@
 services:
-    dg_openticket.db_fixtures.manager:
-        class: DG\OpenticketBundle\DataFixtures\FixturesManager
+    dg_openticket.db_fixture.manager:
+        class: DG\OpenticketBundle\DataFixtures\FixtureManager
 
+    dg_openticket.db_fixture.file_data_factory:
+        class: DG\OpenticketBundle\DataFixtures\FileFixtureDataFactory
+        arguments: [@file_locator]
+        public: false
+
+    dg_openticket.db_fixture.users_fixture_data:
+        class: DG\OpenticketBundle\DataFixtures\FixtureData
+        factory: [@dg_openticket.db_fixture.file_data_factory, createFixtureData]
+        arguments: ['@@DGOpenticketBundle/Resources/fixtures/users.yml']
+    dg_openticket.db_fixture.users_load_checker:
+        class: DG\OpenticketBundle\DataFixtures\ORM\UsersFixtureLoadChecker
+        arguments: [@dg_openticket.db_fixture.users_fixture_data, @doctrine.orm.entity_manager]
     dg_openticket.db_fixture.users:
-        class: DG\OpenticketBundle\DataFixtures\ORM\UsersFixture
-        arguments: [@doctrine.orm.entity_manager, @security.password_encoder]
+        class: DG\OpenticketBundle\DataFixtures\ORM\UsersFixtureLoader
+        arguments: [@dg_openticket.db_fixture.users_fixture_data, @dg_openticket.db_fixture.users_load_checker, @doctrine.orm.entity_manager, @security.password_encoder]
         tags:
             - {name: dg_openticket.db_fixture}
 
-    dg_openticket.db_fixture.ticket_categories:
-        class: DG\OpenticketBundle\DataFixtures\ORM\TicketCategoryFixture
-        arguments: [@doctrine.orm.entity_manager]
+    dg_openticket.db_fixture.ticket_categories.fixture_data:
+        class: DG\OpenticketBundle\DataFixtures\FixtureData
+        factory: [@dg_openticket.db_fixture.file_data_factory, createFixtureData]
+        arguments: ['@@DGOpenticketBundle/Resources/fixtures/ticket_categories.yml']
+    dg_openticket.db_fixture.ticket_categories.load_checker:
+        class: DG\OpenticketBundle\DataFixtures\ORM\TicketRelationsFixtureLoadChecker
+        arguments: [@dg_openticket.db_fixture.ticket_categories.fixture_data, @doctrine.orm.entity_manager]
+    dg_openticket.db_fixture.ticket_categories.fixture_loader:
+        class: DG\OpenticketBundle\DataFixtures\ORM\TicketCategoriesFixtureLoader
+        arguments: [@dg_openticket.db_fixture.ticket_categories.fixture_data, @dg_openticket.db_fixture.ticket_categories.load_checker, @doctrine.orm.entity_manager]
         tags:
             - {name: dg_openticket.db_fixture}
 
-    dg_openticket.db_fixture.ticket_statuses:
-        class: DG\OpenticketBundle\DataFixtures\ORM\TicketStatusFixture
-        arguments: [@doctrine.orm.entity_manager]
+    dg_openticket.db_fixture.ticket_statuses.fixture_data:
+        class: DG\OpenticketBundle\DataFixtures\FixtureData
+        factory: [@dg_openticket.db_fixture.file_data_factory, createFixtureData]
+        arguments: ['@@DGOpenticketBundle/Resources/fixtures/ticket_statuses.yml']
+    dg_openticket.db_fixture.ticket_statuses.load_checker:
+        class: DG\OpenticketBundle\DataFixtures\ORM\TicketRelationsFixtureLoadChecker
+        arguments: [@dg_openticket.db_fixture.ticket_statuses.fixture_data, @doctrine.orm.entity_manager]
+    dg_openticket.db_fixture.ticket_statuses.fixure_loader:
+        class: DG\OpenticketBundle\DataFixtures\ORM\TicketStatusesFixtureLoader
+        arguments: [@dg_openticket.db_fixture.ticket_statuses.fixture_data, @dg_openticket.db_fixture.ticket_statuses.load_checker, @doctrine.orm.entity_manager]
         tags:
             - {name: dg_openticket.db_fixture}

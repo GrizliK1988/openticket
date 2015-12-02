@@ -3,7 +3,7 @@
 namespace DG\OpenticketBundle\DependencyInjection\Compiler;
 
 
-use DG\OpenticketBundle\DataFixtures\FixturesManagerInterface;
+use DG\OpenticketBundle\DataFixtures\FixtureManagerInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -19,12 +19,12 @@ class DbFixtureCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $fixtureManagerService = $container->findDefinition(FixturesManagerInterface::DIC_NAME);
+        $fixtureManagerService = $container->findDefinition(FixtureManagerInterface::DIC_NAME);
         $fixtureServiceIds = $container->findTaggedServiceIds('dg_openticket.db_fixture');
 
         foreach ($fixtureServiceIds as $serviceId => $tags) {
             $fixtureService = $container->findDefinition($serviceId);
-            $fixtureManagerService->addMethodCall('addFixture', [$fixtureService]);
+            $fixtureManagerService->addMethodCall('addFixtureLoader', [$fixtureService]);
         }
     }
 }

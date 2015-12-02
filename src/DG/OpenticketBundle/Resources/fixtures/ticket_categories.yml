@@ -1,0 +1,9 @@
+-
+    - {locale: en, translation: Bug}
+    - {locale: ru, translation: Ошибка}
+-
+    - {locale: en, translation: Improvement}
+    - {locale: ru, translation: Улучшение}
+-
+    - {locale: en, translation: Question}
+    - {locale: ru, translation: Вопрос}

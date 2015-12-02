@@ -48,7 +48,7 @@ class DbFixtureCompilerPassTest extends \PHPUnit_Framework_TestCase
     public function testProcess()
     {
         $this->containerBuilderMock->expects($this->at(0))->method('findDefinition')
-            ->with('dg_openticket.db_fixtures.manager')->willReturn($this->fixtureManagerDefinitionMock);
+            ->with('dg_openticket.db_fixture.manager')->willReturn($this->fixtureManagerDefinitionMock);
 
         $this->containerBuilderMock->expects($this->at(1))->method('findTaggedServiceIds')
             ->with('dg_openticket.db_fixture')->willReturn([
@@ -58,11 +58,11 @@ class DbFixtureCompilerPassTest extends \PHPUnit_Framework_TestCase
 
         $this->containerBuilderMock->expects($this->at(2))->method('findDefinition')
             ->with('fixture_id_1')->willReturn($fixtureDef1 = new Definition());
-        $this->fixtureManagerDefinitionMock->expects($this->at(0))->method('addMethodCall')->with('addFixture', [$fixtureDef1]);
+        $this->fixtureManagerDefinitionMock->expects($this->at(0))->method('addMethodCall')->with('addFixtureLoader', [$fixtureDef1]);
 
         $this->containerBuilderMock->expects($this->at(3))->method('findDefinition')
             ->with('fixture_id_2')->willReturn($fixtureDef2 = new Definition());
-        $this->fixtureManagerDefinitionMock->expects($this->at(1))->method('addMethodCall')->with('addFixture', [$fixtureDef2]);
+        $this->fixtureManagerDefinitionMock->expects($this->at(1))->method('addMethodCall')->with('addFixtureLoader', [$fixtureDef2]);
 
         $this->compilerPass->process($this->containerBuilderMock);
     }
