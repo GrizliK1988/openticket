@@ -42,7 +42,9 @@ class TicketCategoriesFixtureLoaderTest extends \PHPUnit_Framework_TestCase
         $this->fixtureLoadCheckerMock = $this->getMockForAbstractClass('DG\OpenticketBundle\DataFixtures\FixtureLoadCheckerInterface');
         $this->fixtureDataMock = $this->getMockForAbstractClass('DG\OpenticketBundle\DataFixtures\FixtureDataInterface');
         $this->managerMock = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
-        $this->fixture = new TicketCategoriesFixtureLoader($this->fixtureDataMock, $this->fixtureLoadCheckerMock, $this->managerMock);
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcherMock */
+        $eventDispatcherMock = $this->getMockForAbstractClass('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->fixture = new TicketCategoriesFixtureLoader($this->fixtureDataMock, $this->fixtureLoadCheckerMock, $this->managerMock, $eventDispatcherMock);
     }
 
     protected function tearDown()

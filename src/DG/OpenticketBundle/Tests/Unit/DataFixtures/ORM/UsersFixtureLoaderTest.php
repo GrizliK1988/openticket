@@ -46,7 +46,9 @@ class UsersFixtureLoaderTest extends \PHPUnit_Framework_TestCase
         $this->fixtureDataMock = $this->getMockForAbstractClass('DG\OpenticketBundle\DataFixtures\FixtureDataInterface');
         $this->passwordEncoderMock = $this->getMockForAbstractClass('Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface');
         $this->managerMock = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
-        $this->fixture = new UsersFixtureLoader($this->fixtureDataMock, $this->fixtureLoadCheckerMock, $this->managerMock, $this->passwordEncoderMock);
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcherMock */
+        $eventDispatcherMock = $this->getMockForAbstractClass('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->fixture = new UsersFixtureLoader($this->fixtureDataMock, $this->fixtureLoadCheckerMock, $this->managerMock, $this->passwordEncoderMock, $eventDispatcherMock);
     }
 
     protected function tearDown()

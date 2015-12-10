@@ -8,9 +8,12 @@ namespace DG\OpenticketBundle\DataFixtures\ORM;
 use DG\OpenticketBundle\DataFixtures\FixtureDataInterface;
 use DG\OpenticketBundle\DataFixtures\FixtureLoadCheckerInterface;
 use DG\OpenticketBundle\DataFixtures\FixtureLoaderInterface;
+use DG\OpenticketBundle\Event\Fixture\BeforeLoadEvent;
+use DG\OpenticketBundle\Event\Fixture\RecordLoadEvent;
 use DG\OpenticketBundle\Exception\DuplicateException;
 use DG\OpenticketBundle\Model\User;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
@@ -41,21 +44,29 @@ class UsersFixtureLoader implements FixtureLoaderInterface
     private $passwordEncoder;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * UsersFixtureLoader constructor.
      * @param FixtureDataInterface $fixtureData
      * @param FixtureLoadCheckerInterface $fixtureLoadChecker
      * @param EntityManager $entityManager
      * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(FixtureDataInterface $fixtureData,
                                 FixtureLoadCheckerInterface $fixtureLoadChecker,
                                 EntityManager $entityManager,
-                                UserPasswordEncoderInterface $passwordEncoder)
+                                UserPasswordEncoderInterface $passwordEncoder,
+                                EventDispatcherInterface $eventDispatcher)
     {
         $this->fixtureData = $fixtureData;
         $this->fixtureLoadChecker = $fixtureLoadChecker;
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -69,7 +80,10 @@ class UsersFixtureLoader implements FixtureLoaderInterface
         if ($hasBeenLoaded) {
             throw new DuplicateException('users_fixture_already_loaded');
         } else {
-            foreach ($this->fixtureData->getData() as $userFixture) {
+            $fixtureData = $this->fixtureData->getData();
+            $this->eventDispatcher->dispatch(BeforeLoadEvent::NAME, new BeforeLoadEvent(count($fixtureData)));
+
+            foreach ($fixtureData as $userFixture) {
                 $user = User::create()
                     ->setUsername($userFixture['username'])
                     ->setRoles($userFixture['roles'])
@@ -79,9 +93,31 @@ class UsersFixtureLoader implements FixtureLoaderInterface
                 $encodedPassword = $this->passwordEncoder->encodePassword($user, $userFixture['password']);
                 $user->setPassword($encodedPassword);
                 $this->entityManager->persist($user);
+
+                $this->eventDispatcher->dispatch(RecordLoadEvent::NAME, new RecordLoadEvent());
             }
 
             $this->entityManager->flush();
         }
+    }
+
+    /**
+     * Returns name of loader
+     *
+     * @return string
+     */
+    public function getName(): \string
+    {
+        return 'users_loader';
+    }
+
+    /**
+     * Says has been fixture already loaded
+     *
+     * @return bool
+     */
+    public function hasBeenLoaded(): \bool
+    {
+        return $this->fixtureLoadChecker->hasBeenLoaded();
     }
 }
