@@ -30,6 +30,11 @@ class DGOpenticketExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
+        $this->registerDatabaseTableScheme($config, $container);
+    }
+
+    private function registerDatabaseTableScheme(array $config,  ContainerBuilder $container)
+    {
         if ($container->hasDefinition('dg_openticket.table_prefix_subscriber')) {
             $tablePrefixEventSubscriber = $container->findDefinition('dg_openticket.table_prefix_subscriber');
             $tablePrefixEventSubscriber->replaceArgument(0, $config['database_tables_scheme']);

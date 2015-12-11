@@ -1,0 +1,9 @@
+-
+    - {locale: en, translation: Opened}
+    - {locale: ru, translation: Открыт}
+-
+    - {locale: en, translation: In progress}
+    - {locale: ru, translation: Взят в работу}
+-
+    - {locale: en, translation: Closed}
+    - {locale: ru, translation: Закрыт}

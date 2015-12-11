@@ -1,0 +1,6 @@
+services:
+    dg_openticket.command.load_db_fixture:
+        class: DG\OpenticketBundle\Command\LoadDatabaseFixturesCommand
+        arguments: [@dg_openticket.db_fixture.manager, @event_dispatcher]
+        tags:
+            - {name: console.command}
