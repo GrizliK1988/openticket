@@ -24,6 +24,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->arrayNode('locales')->defaultValue(['en', 'ru'])->prototype('scalar')->end()->end()
                 ->scalarNode('database_tables_scheme')->defaultNull()->end()
                 ->enumNode('doctrine_type')
                     ->isRequired()

@@ -50,7 +50,10 @@ class LoadDatabaseFixturesCommandTest extends \PHPUnit_Framework_TestCase
 
         /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcherMock */
         $eventDispatcherMock = $this->getMockForAbstractClass('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $this->command = new LoadDatabaseFixturesCommand($this->fixtureManagerMock, $eventDispatcherMock);
+        /** @var \Symfony\Component\Translation\TranslatorInterface $translatorMock */
+        $translatorMock = $this->getMockForAbstractClass('Symfony\Component\Translation\TranslatorInterface');
+
+        $this->command = new LoadDatabaseFixturesCommand($this->fixtureManagerMock, $eventDispatcherMock, $translatorMock);
         $this->application->addCommands([$this->command]);
     }
 

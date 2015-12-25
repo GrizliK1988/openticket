@@ -26,6 +26,7 @@ class DGOpenticketExtension extends Extension
 
         $doctrineTypeParameterName = sprintf('db_openticket.doctrine_%s_enabled', $config['doctrine_type']);
         $container->setParameter($doctrineTypeParameterName, true);
+        $container->setParameter('dg_openticket.locales', $config['locales']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
