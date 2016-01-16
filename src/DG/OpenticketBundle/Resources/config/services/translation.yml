@@ -1,0 +1,6 @@
+services:
+    dg_openticket.translations.db_loader:
+        class: DG\OpenticketBundle\Services\Translation\DatabaseTranslationLoader
+        arguments: ["@dg_openticket.repository.orm.translations", null]
+        tags:
+            - {name: translation.loader, alias: db}

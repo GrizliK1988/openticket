@@ -1,0 +1,4 @@
+services:
+    dg_openticket.repository.orm.translations:
+        class: DG\OpenticketBundle\Services\Repository\ORM\TranslationRepository
+        arguments: ["@doctrine.orm.entity_manager"]

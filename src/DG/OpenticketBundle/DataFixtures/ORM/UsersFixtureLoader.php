@@ -108,7 +108,7 @@ class UsersFixtureLoader implements FixtureLoaderInterface
      */
     public function getName(): \string
     {
-        return 'users_loader';
+        return 'users_fixture';
     }
 
     /**

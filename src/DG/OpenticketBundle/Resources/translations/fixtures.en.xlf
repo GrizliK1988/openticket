@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="1">
+                <source>users_fixture</source>
+                <target>Users fixture</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>ticket_statuses_fixture</source>
+                <target>Ticket statuses fixture</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>ticket_categories_fixture</source>
+                <target>Ticket categories fixture</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>loaded_translations</source>
+                <target>Loaded single translation|Loaded %count% translations</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

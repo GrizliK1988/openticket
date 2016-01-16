@@ -17,6 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @author Dmitry Grachikov <dgrachikov@gmail.com>
@@ -39,6 +40,11 @@ class LoadDatabaseFixturesCommand extends Command
     private $eventDispatcher;
 
     /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    /**
      * @var ProgressBar
      */
     private $progressBar;
@@ -47,12 +53,15 @@ class LoadDatabaseFixturesCommand extends Command
      * LoadDatabaseFixturesCommand constructor.
      * @param FixtureManagerInterface $fixtureManager
      * @param EventDispatcherInterface $eventDispatcher
+     * @param TranslatorInterface $translator
      */
-    public function __construct(FixtureManagerInterface $fixtureManager, EventDispatcherInterface $eventDispatcher)
+    public function __construct(FixtureManagerInterface $fixtureManager, EventDispatcherInterface $eventDispatcher,
+                                TranslatorInterface $translator)
     {
         parent::__construct(null);
         $this->fixtureManager = $fixtureManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->translator = $translator;
     }
 
     protected function configure()
@@ -80,7 +89,7 @@ class LoadDatabaseFixturesCommand extends Command
         $fixtures = $this->fixtureManager->getFixtureLoaders();
         $fixtureNames = array_map(function (FixtureLoaderInterface $fixtureLoader): \string {
             if ($fixtureLoader->hasBeenLoaded()) {
-                return sprintf('<error>[loaded already] %s</error>', $fixtureLoader->getName());
+                return sprintf('<error>[loaded already] %s</error>', $this->translator->trans($fixtureLoader->getName(), [], 'fixtures', 'en'));
             } else {
                 return $fixtureLoader->getName();
             }
@@ -95,6 +104,7 @@ class LoadDatabaseFixturesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $loadStat = [];
+        $loadedCount = 0;
         $fixtures = $this->fixtureManager->getFixtureLoaders();
         foreach ($fixtures as $fixture) {
             if (in_array($fixture->getName(), $this->loadingFixtures) || !$input->isInteractive()) {
@@ -103,6 +113,7 @@ class LoadDatabaseFixturesCommand extends Command
                 $fixture->load();
                 if ($this->progressBar) {
                     $loadStat[] = [$fixture->getName(), $this->progressBar->getMaxSteps()];
+                    $loadedCount += $this->progressBar->getMaxSteps();
                     $this->progressBar->finish();
                     $this->progressBar = null;
                     $output->writeln('');
@@ -116,5 +127,9 @@ class LoadDatabaseFixturesCommand extends Command
             $table->addRow($fixtureStat);
         }
         $table->render();
+
+        $output->writeln(
+            $this->translator->transChoice('loaded_translations', $loadedCount, ['%count%' => $loadedCount], 'fixtures')
+        );
     }
 }

@@ -38,11 +38,14 @@ class DGOpenticketExtensionTest extends \PHPUnit_Framework_TestCase
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ContainerBuilder $containerMock */
         $containerMock = $this->getMock('Symfony\Component\DependencyInjection\ContainerBuilder');
-        $containerMock->expects($this->once())->method('setParameter')->with('db_openticket.doctrine_orm_enabled', true);
+        $containerMock->expects($this->exactly(2))->method('setParameter')->withConsecutive(
+            ['db_openticket.doctrine_orm_enabled', true],
+            ['dg_openticket.locales', []]
+        );
 
         $extension = new DGOpenticketExtension();
         $extension->load([
-            ['doctrine_type' => 'orm']
+            ['doctrine_type' => 'orm', 'locales' => []]
         ], $containerMock);
     }
 }

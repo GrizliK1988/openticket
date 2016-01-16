@@ -99,7 +99,7 @@ class TicketStatusesFixtureLoader implements FixtureLoaderInterface
      */
     public function getName(): \string
     {
-        return 'ticket_statuses_loader';
+        return 'ticket_statuses_fixture';
     }
 
     /**
